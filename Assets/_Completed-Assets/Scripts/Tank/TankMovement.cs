@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using Tanks;
+using Photon.Pun;
 
 namespace Complete
 {
-  public class TankMovement : MonoBehaviour
-  {
+  public class TankMovement : MonoBehaviourPunCallbacks
+    {
     public int m_PlayerNumber = 1;              // Used to identify which tank belongs to which player.  This is set by this tank's manager.
     public float m_Speed = 12f;                 // How fast the tank moves forward and back.
     public float m_TurnSpeed = 180f;            // How fast the tank turns in degrees per second.
@@ -32,8 +33,9 @@ namespace Complete
     }
 
 
-    private void OnEnable()
+    public override void OnEnable()
     {
+      base.OnEnable();
       // When the tank is turned on, make sure it's not kinematic.
       m_Rigidbody.isKinematic = false;
 
@@ -52,8 +54,9 @@ namespace Complete
     }
 
 
-    private void OnDisable()
+    public override void OnDisable()
     {
+            base.OnDisable();
       // When the tank is turned off, set it to kinematic so it stops moving.
       m_Rigidbody.isKinematic = true;
 
@@ -145,12 +148,19 @@ namespace Complete
       // Apply this rotation to the rigidbody's rotation.
       m_Rigidbody.MoveRotation(m_Rigidbody.rotation * turnRotation);
     }
-        private void TankTurrentTurn()
+    private void TankTurrentTurn()
+    {
+        float turn = TankTurrentTurnValue * m_TurnSpeed * Time.deltaTime;
+        Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
+        Vector3 turnVector = turnRotation.eulerAngles;
+        turrent.Rotate(turnVector, Space.Self);
+            photonView.RPC("TankTurrentTurnSync", RpcTarget.Others, turrent.rotation);
+    }
+
+        [PunRPC]
+        private void TankTurrentTurnSync(Quaternion quaternion)
         {
-            float turn = TankTurrentTurnValue * m_TurnSpeed * Time.deltaTime;
-            Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
-            Vector3 turnVector = turnRotation.eulerAngles;
-            turrent.Rotate(turnVector);
+            turrent.rotation = quaternion;
         }
-  }
+    }
 }
