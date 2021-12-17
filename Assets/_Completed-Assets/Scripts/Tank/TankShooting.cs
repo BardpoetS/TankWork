@@ -2,13 +2,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 namespace Complete
 {
     public class TankShooting : MonoBehaviourPunCallbacks
     {
         public int m_PlayerNumber = 1;              // Used to identify the different players.
         public Rigidbody m_Shell;                   // Prefab of the shell.
-        public Transform m_FireTransform;           // A child of the tank where the shells are spawned.
+        public Transform m_FireTransform;           // A child of the tank where the shells are spawned.  //發射點
         public Slider m_AimSlider;                  // A child of the tank that displays the current launch force.
         public AudioSource m_ShootingAudio;         // Reference to the audio source used to play the shooting audio. NB: different to the movement audio source.
         public AudioClip m_ChargingClip;            // Audio that plays when each shot is charging up.
